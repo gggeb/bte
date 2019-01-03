@@ -8,91 +8,91 @@ definitions=""
 template=""
 
 usage() {
-	echo "USAGE: $0 [-o, --output-file <FILE>] <DEFINITIONS> <TEMPLATE>"
-	echo "       -h, --help               output this message"
-	echo "       -o, --output-file <FILE> sets output file to FILE"
+    echo "USAGE: $0 [-o, --output-file <FILE>] <DEFINITIONS> <TEMPLATE>"
+    echo "       -h, --help               output this message"
+    echo "       -o, --output-file <FILE> sets output file to FILE"
 }
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-	usage
-	exit
+    usage
+    exit
 fi
 
 if [ "$#" -gt 1 ]; then
-	while [ "$#" -gt 2 ]; do
-		case $1 in
-			-h | --help)
-				usage; exit;;
-			-o | --output-dir)
-				if [ "$#" -gt 3 ]; then
-					output="$2"
-					shift 2
-				else
-					echo "TOO FEW ARGUMENTS. ABORTING." >&2
-					exit
-				fi
-				;;
-			*)
-				echo "INVALID FLAG \"$1\". ABORTING." >&2; exit;;
-		esac
-	done
+    while [ "$#" -gt 2 ]; do
+        case $1 in
+            -h | --help)
+                usage; exit;;
+            -o | --output-dir)
+                if [ "$#" -gt 3 ]; then
+                    output="$2"
+                    shift 2
+                else
+                    echo "TOO FEW ARGUMENTS. ABORTING." >&2
+                    exit
+                fi
+                ;;
+            *)
+                echo "INVALID FLAG \"$1\". ABORTING." >&2; exit;;
+        esac
+    done
 
-	definitions="$1"
-	template="$2"
+    definitions="$1"
+    template="$2"
 else
-	echo "TOO FEW ARGUMENTS. ABORTING." >&2
-	exit
+    echo "TOO FEW ARGUMENTS. ABORTING." >&2
+    exit
 fi
 
 main() {
-	if [ "$output" = "" ]; then
-		output="${template%.*}"
-	fi
+    if [ "$output" = "" ]; then
+        output="${template%.*}"
+    fi
 
-	echo "OUTPUT FILE   - $output"
-	echo "DEFINITIONS   - $definitions"
-	echo "TEMPLATE FILE - $template"
+    echo "OUTPUT FILE   - $output"
+    echo "DEFINITIONS   - $definitions"
+    echo "TEMPLATE FILE - $template"
 
-	echo ""
+    echo ""
 
-	if [ ! -f "$definitions" ]; then
-		echo "DEFINITIONS CAN'T BE FOUND. ABORTING." >&2
-		exit
-	else
-		echo "DEFINITIONS FOUND."
-	fi
-	
-	if [ ! -f "$template" ]; then
-		echo "TEMPLATE FILE CAN'T BE FOUND. ABORTING." >&2
-		exit
-	else
-		echo "TEMPLATE FILE FOUND."
-	fi
+    if [ ! -f "$definitions" ]; then
+        echo "DEFINITIONS CAN'T BE FOUND. ABORTING." >&2
+        exit
+    else
+        echo "DEFINITIONS FOUND."
+    fi
 
-	if [ -f "$output" ]; then
-		read -p "OVERWRITE PREVIOUS OUTPUT? (Y/n): " o
-		case $o in
-			[Nn]* )
-				echo "ABORTING."
-				exit
-				;;
-			* )
-				rm "$output"
-				;;
-		esac
-	fi
+    if [ ! -f "$template" ]; then
+        echo "TEMPLATE FILE CAN'T BE FOUND. ABORTING." >&2
+        exit
+    else
+        echo "TEMPLATE FILE FOUND."
+    fi
 
-	echo "GENERATING OUTPUT."
+    if [ -f "$output" ]; then
+        read -p "OVERWRITE PREVIOUS OUTPUT? (Y/n): " o
+        case $o in
+            [Nn]* )
+                echo "ABORTING."
+                exit
+                ;;
+            * )
+                rm "$output"
+                ;;
+        esac
+    fi
 
-	source "$definitions"
-	
-	contents="`cat $template`"
-	for i in "${!DEFINITIONS[@]}"; do
-		contents="${contents//\$$i/${DEFINITIONS[$i]}}"
-		contents="${contents//\\${DEFINITIONS[$i]}/\$$i}"
-	done
-	echo "$contents" > "$output"
-	echo "DONE."
+    echo "GENERATING OUTPUT."
+
+    source "$definitions"
+
+    contents="`cat $template`"
+    for i in "${!DEFINITIONS[@]}"; do
+        contents="${contents//\$$i/${DEFINITIONS[$i]}}"
+        contents="${contents//\\${DEFINITIONS[$i]}/\$$i}"
+    done
+    echo "$contents" > "$output"
+    echo "DONE."
 }
 
 main
