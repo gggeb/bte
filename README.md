@@ -1,4 +1,4 @@
-BTE - _B_ash _T_emplate _E_ngine
+BTE
 ===
 Usage
 -----
