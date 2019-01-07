@@ -7,11 +7,27 @@ USAGE: bte [-o, --output-file <FILE>] <DEFINITIONS> <TEMPLATE>
        -h, --help               output this message
        -o, --output-file <FILE> sets output file to FILE
 ```
-Syntax
-------
+Synax (Within definitions file)
+-------------------------------
+Definitions files are simply bash scripts. They define a 'DEFINITIONS' associative array, and the elements within the array are the constants which will be injected into the input (template) file.
+E.g.
 ```
-$$X = %X
-$X  = VALUE
+#!/usr/bin/env bash
+
+declare -A DEFINITIONS=(
+       ...
+       ["DGRY"]="#111111"
+       ...
+)
+```
+Syntax (Within template file)
+-----------------------------
+`$X` maps to the value of X, and `$$X` simply removes the first $ (`$$X -> $X`).
+E.g.
+```
+...
+bspc config active_border_color "$DGRY"
+...
 ```
 Notes
 -----
